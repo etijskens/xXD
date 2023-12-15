@@ -126,13 +126,24 @@ def test_cpp_morton_code_3():
         bx = bx[1:]+'0'
         morton_code(bx,by,bz)
     
+    
+def test_scale():
+    x = np.single(.0);
+    print(x, '->', xxd.morton.scale(x))
+    x = np.single(1.0);
+    print(x, '->', xxd.morton.scale(x))
+    x = np.single(0.999999);
+    print(x, '->', xxd.morton.scale(x))
+    x = np.single(0.99999);
+    print(x, '->', xxd.morton.scale(x))
+
 
 #===============================================================================
 # The code below is for debugging a particular test in eclipse/pydev.
 # (normally all tests are run with pytest)
 #===============================================================================
 if __name__ == "__main__":
-    the_test_you_want_to_debug = test_cpp_morton_code_1
+    the_test_you_want_to_debug = test_scale
 
     print(f"__main__ running {the_test_you_want_to_debug} ...")
     the_test_you_want_to_debug()

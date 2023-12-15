@@ -8,6 +8,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <algorithm>
+#include <iostream>
 
 namespace py = pybind11;
 
@@ -26,9 +27,11 @@ unsigned int expandBits(unsigned int v)
 // given 3D point located within the unit cube [0,1].
 unsigned int morton3D(float x, float y, float z)
 {
+ // If we make sure that x, y and z are in [0,1[ the clipping below can be skipped
     x = std::min(std::max(x * 1024.0f, 0.0f), 1023.0f);
     y = std::min(std::max(y * 1024.0f, 0.0f), 1023.0f);
     z = std::min(std::max(z * 1024.0f, 0.0f), 1023.0f);
+ // Expand and interleave
     unsigned int xx = expandBits((unsigned int)x);
     unsigned int yy = expandBits((unsigned int)y);
     unsigned int zz = expandBits((unsigned int)z);
@@ -83,6 +86,12 @@ code
         pm[i] = morton3D(px[i], py[i], pz[i]);
 }
 
+float scale(float x)
+{
+    std::cout << x << " -> " << x*1024.0f << std::endl;
+    x = std::min(std::max(x * 1024.0f, 0.0f), 1023.0f);
+    return x;
+}
 
 PYBIND11_MODULE(morton, m)
 {// optional module doc-string
@@ -91,4 +100,5 @@ PYBIND11_MODULE(morton, m)
  // m.def("exposed_name", function_pointer, "doc-string for the exposed function");
     m.def("code", &code, "Compute the morton code for a collection of points.");
     m.def("code1", &morton3D, "Compute the morton code for a single points.");
+    m.def("scale", &scale);
 }
